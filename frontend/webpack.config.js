@@ -7,8 +7,8 @@ module.exports = {
     webpack: './src/main.js'
   },
   output: {
-    path: '../../app/assets/javascripts',
-    filename: '[name].js'
+    path: '/Users/tech-camp/projects/eng-team/mini-chat/app/assets/javascripts',
+    filename: 'main.js'
   },
   module: {
     rules: [
