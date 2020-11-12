@@ -27,3 +27,6 @@
 /config/master.key
 
 /app/assets/javascripts/*
+/app/assets/stylesheets/*
+
+
