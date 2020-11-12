@@ -18,20 +18,62 @@ import ChatContainer from './components/ChatContainer.vue'
       return {
         groups: [
           {
+            curernt_group: true,
             name: "チャットグループ名",
-            unread_count: 2
+            unread_count: 2,
+            messages: [
+              {
+                text: "メッセージ"
+              },
+              {
+                text: "メッセージ"
+              },
+              {
+                text: "メッセージ"
+              },
+            ]
           },
           {
+            curernt_group: false,
             name: "チャットグループ名",
-            unread_count: 0
+            unread_count: 0,
+            messages: [
+              {
+                text: "メッセージ"
+              },
+              {
+                text: "メッセージ"
+              },
+            ]
           },
           {
+            curernt_group: false,
             name: "チャットグループ名",
-            unread_count: 0
+            unread_count: 0,
+            messages: [
+              {
+                text: "メッセージ"
+              },
+            ]
           },
           {
+            curernt_group: false,
             name: "チャットグループ名",
-            unread_count: 0
+            unread_count: 0,
+            messages: [
+              {
+                text: "メッセージ"
+              },
+              {
+                text: "メッセージ"
+              },
+              {
+                text: "メッセージ"
+              },
+              {
+                text: "メッセージ"
+              },
+            ]
           },
         ]
       }
@@ -60,6 +102,7 @@ time, mark, audio, video {
  outline:0;
  vertical-align:baseline;
  background:transparent;
+ box-sizing: border-box;
 }
 
 body {
