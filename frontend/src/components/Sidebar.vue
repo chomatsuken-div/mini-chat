@@ -5,7 +5,7 @@
     </div>
     <ul class="sidebar__groups">
       <li class="sidebar__groups__list" v-for="(group, index) in groups" :key="index">
-        <button>{{group.name}}</button>
+        <button @click="selectGroup(index)">{{group.name}}</button>
         <div class="circle-red" v-if="group.unread_count > 0">{{group.unread_count}}</div>
       </li>
     </ul>
@@ -20,6 +20,11 @@ export default {
   ],
   data: function () {
     return {
+    }
+  },
+  methods: {
+    selectGroup: function (index) {
+      this.$emit('changeGroup', index)
     }
   }
 }
@@ -54,6 +59,7 @@ export default {
     padding: 30px;
 
     &__list {
+      height: 50px;
       display: flex;
       padding-bottom: 30px;
 

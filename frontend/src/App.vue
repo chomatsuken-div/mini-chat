@@ -1,6 +1,6 @@
 <template>
   <div id="main">
-    <sidebar v-bind:groups="groups"></sidebar>
+    <sidebar v-bind:groups="groups" @changeGroup="currentGroupChange"></sidebar>
     <chat-container v-bind:groups="groups"></chat-container>
   </div>
 </template>
@@ -76,6 +76,17 @@ import ChatContainer from './components/ChatContainer.vue'
             ]
           },
         ]
+      }
+    },
+    methods: {
+      currentGroupChange: function (index) {
+        var groups = this.groups
+        groups.forEach(function(group){
+          group.curernt_group = false
+        })
+        var group = groups[index]
+        group.curernt_group = true
+        group.unread_count = 0
       }
     }
   }
