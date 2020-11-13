@@ -4,8 +4,8 @@
       <div class="modal-window">
         <div class="modal-content" v-if="modalOption == 'create'">
           <div class="title">グループ新規作成</div>
-          <form class="content">
-            <input class="input-text" type="text" name="name" placeholder="グループ名">
+          <form class="content" @submit.prevent="createRequestGroup">
+            <input class="input-text" type="text" v-model="newGroup.name" placeholder="グループ名">
             <input class="input-submit" type="submit" value="登録">
           </form>
         </div>
@@ -20,6 +20,12 @@
 </template>
 
 <script>
+import axios from 'axios';
+
+axios.defaults.headers.common = {
+    'X-Requested-With': 'XMLHttpRequest',
+    'X-CSRF-TOKEN' : document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+};
 
 export default {
   props: [
@@ -28,8 +34,30 @@ export default {
   ],
   data: function () {
     return {
+      newGroup: {
+        name: ""
+      },
     }
-  }
+  },
+  methods: {
+    createRequestGroup: function(e){
+      if (this.newGroup.name != ""){
+        var group = {name: this.newGroup.name};
+        axios.post('/api/v1/groups.json', group)
+        .then(function(response){
+          var newGroupData = {
+            curernt_group: true,
+            name: response.data.name,
+            unread_count: 0,
+            messages: []
+          };
+          this.$emit('addNewGroup', newGroupData);
+        }.bind(this))
+        .catch(function(error){
+        });
+      }
+    }
+  },
 }
 </script>
 

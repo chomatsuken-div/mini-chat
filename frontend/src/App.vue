@@ -1,6 +1,6 @@
 <template>
   <div id="main">
-    <modal @close="closeModal" v-if="modal" v-bind:modalOption="modalOption"></modal>
+    <modal @close="closeModal" @addNewGroup="addGroups" v-if="modal" v-bind:modalOption="modalOption"></modal>
     <sidebar v-bind:groups="groups" @createGroup="createGroup" @changeGroup="currentGroupChange"></sidebar>
     <chat-container v-bind:groups="groups"></chat-container>
   </div>
@@ -10,6 +10,8 @@
 import Modal from './components/Modal.vue'
 import Sidebar from './components/Sidebar.vue'
 import ChatContainer from './components/ChatContainer.vue'
+
+import axios from 'axios'
 
   export default {
     components:{
@@ -21,66 +23,7 @@ import ChatContainer from './components/ChatContainer.vue'
       return {
         modal: false,
         modalOption: "",
-        groups: [
-          {
-            curernt_group: true,
-            name: "チャットグループ名",
-            unread_count: 2,
-            messages: [
-              {
-                text: "メッセージ"
-              },
-              {
-                text: "メッセージ"
-              },
-              {
-                text: "メッセージ"
-              },
-            ]
-          },
-          {
-            curernt_group: false,
-            name: "チャットグループ名",
-            unread_count: 0,
-            messages: [
-              {
-                text: "メッセージ"
-              },
-              {
-                text: "メッセージ"
-              },
-            ]
-          },
-          {
-            curernt_group: false,
-            name: "チャットグループ名",
-            unread_count: 0,
-            messages: [
-              {
-                text: "メッセージ"
-              },
-            ]
-          },
-          {
-            curernt_group: false,
-            name: "チャットグループ名",
-            unread_count: 0,
-            messages: [
-              {
-                text: "メッセージ"
-              },
-              {
-                text: "メッセージ"
-              },
-              {
-                text: "メッセージ"
-              },
-              {
-                text: "メッセージ"
-              },
-            ]
-          },
-        ]
+        groups: []
       }
     },
     methods: {
@@ -102,6 +45,10 @@ import ChatContainer from './components/ChatContainer.vue'
       createGroup: function(e){
         this.modal = true
         this.modalOption = "create"
+      },
+      addGroups: function(group){
+        this.groups.push(group);
+        this.closeModal();
       }
     }
   }
