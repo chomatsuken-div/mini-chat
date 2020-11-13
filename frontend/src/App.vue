@@ -2,7 +2,7 @@
   <div id="main">
     <modal @close="closeModal" @addNewGroup="addGroups" v-if="modal" v-bind:modalOption="modalOption"></modal>
     <sidebar v-bind:groups="groups" @createGroup="createGroup" @changeGroup="currentGroupChange"></sidebar>
-    <chat-container v-bind:groups="groups"></chat-container>
+    <chat-container v-bind:groups="groups" v-bind:groupIndex="current_group_index"></chat-container>
   </div>
 </template>
 
@@ -28,6 +28,7 @@ axios.defaults.headers.common = {
       return {
         modal: false,
         modalOption: "",
+        current_group_index: null,
         groups: []
       }
     },
@@ -39,13 +40,9 @@ axios.defaults.headers.common = {
         this.modal = false;
       },
       currentGroupChange: function (index) {
-        var groups = this.groups;
-        groups.forEach(function(group){
-          group.curernt_group = false;
-        });
-        var group = groups[index];
-        group.curernt_group = true;
+        var group = this.groups[index];
         group.unread_count = 0;
+        this.current_group_index = index;
       },
       createGroup: function(e){
         this.modal = true;
@@ -53,6 +50,7 @@ axios.defaults.headers.common = {
       },
       addGroups: function(group){
         this.groups.unshift(group);
+        this.current_group_index = 0;
         this.closeModal();
       }
     },
@@ -63,7 +61,6 @@ axios.defaults.headers.common = {
         var groups_array = [];
         response_groups.forEach(function(group){
           var molding_group = {
-            curernt_group: false,
             name: group.name,
             unread_count: 0,
             messages: []

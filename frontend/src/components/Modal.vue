@@ -46,7 +46,6 @@ export default {
         axios.post('/api/v1/groups.json', group)
         .then(function(response){
           var newGroupData = {
-            curernt_group: true,
             name: response.data.name,
             unread_count: 0,
             messages: []
