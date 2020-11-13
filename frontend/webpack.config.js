@@ -1,52 +1,59 @@
-const VueLoaderPlugin = require('vue-loader/lib/plugin');
+const path = require('path');
+const webpack = require('webpack');
+const { VueLoaderPlugin } = require('vue-loader');
+const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+
+function resolve (dir) {
+  return path.resolve(__dirname, dir)
+}
+
+const RAILS_ASSETS_ROOT = resolve('../app/assets/');
 
 module.exports = {
-  devtool: 'inline-source-map',
-  mode: 'development',
-  entry: {
-    webpack: './src/main.js'
-  },
+  entry: resolve('./src/main.js'),
   output: {
-    path: '/Users/tech-camp/projects/eng-team/mini-chat/app/assets/javascripts',
-    filename: 'main.js'
+    path: RAILS_ASSETS_ROOT,
+    filename: 'javascripts/main.js',
   },
   module: {
     rules: [
       {
-        test: /\.js$/,
-        exclude: /node_modules/,
-        loader: 'babel-loader'
-      },
-      {
         test: /\.vue$/,
-        loader: 'vue-loader'
+        use: {
+          loader: 'vue-loader'
+        }
       },
       {
-        test: /\.css$/,
-        use: ['vue-style-loader', 'css-loader']
+        test: /\.js$/,
+        loader: 'babel-loader',
+        exclude: file => (
+          /node_modules/.test(file) &&
+          !/\.vue\.js/.test(file)
+        )
       },
+
       {
-        test: /\.scss$/,
+        test: /\.(c|sc)ss$/,
         use: [
-          'vue-style-loader',
-          'css-loader',
           {
-            loader: 'sass-loader',
+            loader: MiniCssExtractPlugin.loader,
           },
-        ],
+          'css-loader',
+          'sass-loader'
+        ]
       }
     ]
   },
   resolve: {
-    extensions: ['.js', '.vue'],
-    alias: {
-      vue$: 'vue/dist/vue.esm.js',
-    },
+    extensions: ['.vue', '.js'],
   },
   plugins: [
-    new VueLoaderPlugin()
-  ],
-  externals: {
-    jquery: 'jQuery'
-  }
-}
+    new webpack.ProvidePlugin({
+      'Vue': 'vue'
+    }),
+    new VueLoaderPlugin(),
+    new MiniCssExtractPlugin({
+      filename: 'stylesheets/main.css'
+    })
+  ]
+};
