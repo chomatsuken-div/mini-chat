@@ -11,7 +11,12 @@ import Modal from './components/Modal.vue'
 import Sidebar from './components/Sidebar.vue'
 import ChatContainer from './components/ChatContainer.vue'
 
-import axios from 'axios'
+import axios from 'axios';
+
+axios.defaults.headers.common = {
+    'X-Requested-With': 'XMLHttpRequest',
+    'X-CSRF-TOKEN' : document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+};
 
   export default {
     components:{
@@ -28,29 +33,49 @@ import axios from 'axios'
     },
     methods: {
       openModal() {
-        this.modal = true
+        this.modal = true;
       },
       closeModal() {
-        this.modal = false
+        this.modal = false;
       },
       currentGroupChange: function (index) {
-        var groups = this.groups
+        var groups = this.groups;
         groups.forEach(function(group){
-          group.curernt_group = false
-        })
-        var group = groups[index]
-        group.curernt_group = true
-        group.unread_count = 0
+          group.curernt_group = false;
+        });
+        var group = groups[index];
+        group.curernt_group = true;
+        group.unread_count = 0;
       },
       createGroup: function(e){
-        this.modal = true
-        this.modalOption = "create"
+        this.modal = true;
+        this.modalOption = "create";
       },
       addGroups: function(group){
-        this.groups.push(group);
+        this.groups.unshift(group);
         this.closeModal();
       }
+    },
+    created() {
+      axios.get('/api/v1/groups.json')
+      .then(function(response){
+        var response_groups = response.data;
+        var groups_array = [];
+        response_groups.forEach(function(group){
+          var molding_group = {
+            curernt_group: false,
+            name: group.name,
+            unread_count: 0,
+            messages: []
+          };
+          groups_array.push(molding_group);
+        })
+        this.$data.groups = groups_array;
+      }.bind(this))
+      .catch(function(error){
+      });
     }
+
   }
 </script>
 

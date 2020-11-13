@@ -1,4 +1,13 @@
 class Api::V1::GroupsController < ApplicationController
+  def index
+    groups = Group.order(created_at: :DESC)
+    if groups
+      render json: groups, status: 200
+    else
+      render json: { errors: "グループが存在しません" }
+    end
+  end
+
   def create
     group = Group.new(group_params)
     if group.save

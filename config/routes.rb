@@ -3,7 +3,7 @@ Rails.application.routes.draw do
 
   namespace :api, {format: 'json'} do
     namespace :v1 do
-      resources :groups, only: [:create]
+      resources :groups, only: [:index, :create]
     end
   end
 end

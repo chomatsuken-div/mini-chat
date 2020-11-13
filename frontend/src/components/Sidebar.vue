@@ -24,7 +24,7 @@ export default {
   },
   methods: {
     selectGroup: function(index){
-      this.$emit('changeGroup', index)
+      this.$emit('changeGroup', index);
     }
   }
 }
