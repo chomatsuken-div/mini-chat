@@ -36,10 +36,8 @@ export default {
   height: 100vh;
   background: #808080;
   color: #fff;
-
   &__add-group {
     height: 60px;
-
     button {
       width: 35px;
       height: 35px;
@@ -47,28 +45,23 @@ export default {
       border: #fff solid 1px;
       border-radius: 999px;
     }
-
     button::before {
       content: "\02b";
       font-size: 1.6rem;
       color: #fff;
     }
   }
-
   &__groups {
     padding: 30px;
-
     &__list {
       height: 50px;
       display: flex;
       padding-bottom: 30px;
-
       button {
         font-size: 1rem;
         color: #fff;
         border: none;
       }
-
       .circle-red {
         height: 25px;
         width: 25px;
@@ -81,6 +74,4 @@ export default {
     }
   }
 }
-
-
 </style>
