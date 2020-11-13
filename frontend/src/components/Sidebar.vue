@@ -1,7 +1,7 @@
 <template>
   <div class="sidebar">
     <div class="sidebar__add-group">
-      <button></button>
+      <button @click="$emit('createGroup')"></button>
     </div>
     <ul class="sidebar__groups">
       <li class="sidebar__groups__list" v-for="(group, index) in groups" :key="index">
@@ -23,7 +23,7 @@ export default {
     }
   },
   methods: {
-    selectGroup: function (index) {
+    selectGroup: function(index){
       this.$emit('changeGroup', index)
     }
   }

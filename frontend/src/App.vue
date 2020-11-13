@@ -1,21 +1,26 @@
 <template>
   <div id="main">
-    <sidebar v-bind:groups="groups" @changeGroup="currentGroupChange"></sidebar>
+    <modal @close="closeModal" v-if="modal" v-bind:modalOption="modalOption"></modal>
+    <sidebar v-bind:groups="groups" @createGroup="createGroup" @changeGroup="currentGroupChange"></sidebar>
     <chat-container v-bind:groups="groups"></chat-container>
   </div>
 </template>
 
 <script>
+import Modal from './components/Modal.vue'
 import Sidebar from './components/Sidebar.vue'
 import ChatContainer from './components/ChatContainer.vue'
 
   export default {
     components:{
+      Modal,
       Sidebar,
       ChatContainer
     },
     data: function () {
       return {
+        modal: false,
+        modalOption: "",
         groups: [
           {
             curernt_group: true,
@@ -79,6 +84,12 @@ import ChatContainer from './components/ChatContainer.vue'
       }
     },
     methods: {
+      openModal() {
+        this.modal = true
+      },
+      closeModal() {
+        this.modal = false
+      },
       currentGroupChange: function (index) {
         var groups = this.groups
         groups.forEach(function(group){
@@ -87,6 +98,10 @@ import ChatContainer from './components/ChatContainer.vue'
         var group = groups[index]
         group.curernt_group = true
         group.unread_count = 0
+      },
+      createGroup: function(e){
+        this.modal = true
+        this.modalOption = "create"
       }
     }
   }
