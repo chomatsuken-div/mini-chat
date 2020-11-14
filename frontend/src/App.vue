@@ -51,7 +51,6 @@ axios.defaults.headers.common = {
       addGroups: function(group){
         this.groups.unshift(group);
         this.current_group_index = 0;
-        this.closeModal();
       }
     },
     created() {

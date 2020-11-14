@@ -2,7 +2,18 @@
   <transition name="modal" appear>
     <div class="modal modal-overlay">
       <div class="modal-window">
-        <div class="modal-content" v-if="modalOption == 'create'">
+        <div class="modal-content" v-if="notice != null">
+          <div class="title">通知</div>
+          <div class="content">
+            <ul v-if="notice.success != null">
+              <li class="success-txt" v-for="message in notice.success">{{message}}</li>
+            </ul>
+            <ul v-else-if="notice.errors != null">
+              <li class="error-txt" v-for="message in notice.errors">{{message}}</li>
+            </ul>
+          </div>
+        </div>
+        <div class="modal-content" v-else-if="modalOption == 'create'">
           <div class="title">グループ新規作成</div>
           <form class="content" @submit.prevent="createRequestGroup">
             <input class="input-text" type="text" v-model="newGroup.name" placeholder="グループ名">
@@ -37,6 +48,7 @@ export default {
       newGroup: {
         name: ""
       },
+      notice: null
     }
   },
   methods: {
@@ -45,15 +57,23 @@ export default {
         var group = {name: this.newGroup.name};
         axios.post('/api/v1/groups.json', group)
         .then(function(response){
-          var newGroupData = {
-            name: response.data.name,
-            unread_count: 0,
-            messages: []
-          };
-          this.$emit('addNewGroup', newGroupData);
+          if (response.data.errors){
+            this.notice = {errors: response.data.errors}
+          } else {
+            var newGroupData = {
+              name: response.data.name,
+              unread_count: 0,
+              messages: []
+            };
+            this.notice = {success: ['グループ作成が成功しました']}
+            this.$emit('addNewGroup', newGroupData);
+          }
         }.bind(this))
         .catch(function(error){
+          alert(error.message);
         });
+      } else {
+        this.notice = {errors: ['グループ名を入力してください']}
       }
     }
   },
@@ -93,6 +113,14 @@ export default {
       flex-direction: column;
       justify-content: center;
       align-items: center;
+      .success-txt {
+        color: #0F0;
+        font-weight: bold;
+      }
+      .error-txt {
+        color: #F00;
+        font-weight: bold;
+      }
       .input-text {
         width: 50%;
         height: 30px;
