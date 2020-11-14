@@ -56,17 +56,19 @@ axios.defaults.headers.common = {
     created() {
       axios.get('/api/v1/groups.json')
       .then(function(response){
-        var response_groups = response.data;
-        var groups_array = [];
-        response_groups.forEach(function(group){
-          var molding_group = {
-            name: group.name,
-            unread_count: 0,
-            messages: []
-          };
-          groups_array.push(molding_group);
-        })
-        this.$data.groups = groups_array;
+        if (!response.data.errors){
+          var response_groups = response.data;
+          var groups_array = [];
+          response_groups.forEach(function(group){
+            var molding_group = {
+              name: group.name,
+              unread_count: 0,
+              messages: []
+            };
+            groups_array.push(molding_group);
+          })
+          this.$data.groups = groups_array;
+        }
       }.bind(this))
       .catch(function(error){
         alert(error.message);
