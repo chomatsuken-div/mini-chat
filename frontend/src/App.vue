@@ -69,6 +69,7 @@ axios.defaults.headers.common = {
         this.$data.groups = groups_array;
       }.bind(this))
       .catch(function(error){
+        alert(error.message);
       });
     }
 
