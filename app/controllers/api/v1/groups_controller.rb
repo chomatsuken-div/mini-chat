@@ -1,7 +1,7 @@
 class Api::V1::GroupsController < ApplicationController
   def index
     groups = Group.order(created_at: :DESC)
-    if groups
+    if groups.present?
       render json: groups, status: 200
     else
       render json: { errors: "グループが存在しません" }
