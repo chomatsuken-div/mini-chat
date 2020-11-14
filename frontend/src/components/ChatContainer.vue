@@ -69,6 +69,9 @@ export default {
       height: calc(100% - 146px);
       margin: 30px;
       overflow: auto;
+      &::-webkit-scrollbar {
+        display:none;
+      }
       li {
         padding-bottom: 20px;
       }

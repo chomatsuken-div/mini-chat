@@ -38,6 +38,7 @@ export default {
   color: #fff;
   &__add-group {
     height: 60px;
+    margin-bottom: 30px;
     button {
       width: 35px;
       height: 35px;
@@ -52,7 +53,12 @@ export default {
     }
   }
   &__groups {
-    padding: 30px;
+    height: calc(100% - 90px);
+    overflow: scroll;
+    padding: 0 30px 30px;
+    &::-webkit-scrollbar {
+      display:none;
+    }
     &__list {
       height: 50px;
       display: flex;
