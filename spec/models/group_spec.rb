@@ -29,18 +29,18 @@ RSpec.describe Group, type: :model do
       it "nameが空だと登録できない" do
         @group.name = ''
         @group.valid?
-        expect(@group.errors.full_messages).to include("Name can't be blank")
+        expect(@group.errors.full_messages).to include("グループ名を入力してください")
       end
       it "nameが21文字以上だと登録できない" do
         @group.name = 'a' * 21
         @group.valid?
-        expect(@group.errors.full_messages).to include("Name is too long (maximum is 20 characters)")
+        expect(@group.errors.full_messages).to include("グループ名は20文字以内で入力してください")
       end
       it "nameが重複していると登録できない" do
         another_group = create(:group, name: "test")
         @group.name = 'test'
         @group.valid?
-        expect(@group.errors.full_messages).to include("Name has already been taken")
+        expect(@group.errors.full_messages).to include("グループ名はすでに存在します")
       end
     end
   end
