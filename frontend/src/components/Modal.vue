@@ -5,10 +5,10 @@
         <div class="modal-content" v-if="notice !== null">
           <div class="title">通知</div>
           <div class="content">
-            <ul v-if="notice.success !== null">
+            <ul v-if="notice.success !== undefined">
               <li class="success-txt" v-for="message in notice.success">{{message}}</li>
             </ul>
-            <ul v-else-if="notice.errors != null">
+            <ul v-else-if="notice.errors !== undefined">
               <li class="error-txt" v-for="message in notice.errors">{{message}}</li>
             </ul>
           </div>
@@ -68,13 +68,14 @@ export default {
             _this.$emit('addNewGroup', newGroupData);
           } else {
             _this.notice = {errors: response.data.errors};
+
           }
         })
         .catch(function(error){
           alert(error.message);
         });
       } else {
-        _this.notice = {errors: ['グループ名を入力してください']}
+        _this.notice = {errors: ['グループ名を入力してください']};
       }
     }
   },
