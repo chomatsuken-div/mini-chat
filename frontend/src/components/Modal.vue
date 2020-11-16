@@ -55,19 +55,19 @@ export default {
     createRequestGroup: function(e){
       const _this = this;
       if (_this.newGroup.name != ''){
-        var group = {name: _this.newGroup.name};
-        axios.post(_this.$API_V1_GROUPS_PATH_JSON, group)
+        const group = {name: _this.newGroup.name};
+        axios.post(_this.$API_V1_GROUPS_PATH_JSON, group);
         .then(function(response){
           if (!response.data.errors){
-            _this.notice = {errors: response.data.errors}
-          } else {
-            var newGroupData = {
+            const newGroupData = {
               name: response.data.name,
               unread_count: 0,
               messages: []
             };
-            _this.notice = {success: ['グループ作成が成功しました']}
+            _this.notice = {success: ['グループ作成が成功しました']};
             _this.$emit('addNewGroup', newGroupData);
+          } else {
+            _this.notice = {errors: response.data.errors};
           }
         })
         .catch(function(error){
