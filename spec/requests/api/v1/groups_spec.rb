@@ -1,6 +1,7 @@
 require 'rails_helper'
 
 describe 'グループ一覧機能(api/v1/groups#index)' do
+
   context 'グループの取得が成功する' do
     it '全てのグループを取得する' do
       create_list(:group, 10)
@@ -24,9 +25,16 @@ describe 'グループ一覧機能(api/v1/groups#index)' do
 end
 
 describe 'グループ作成機能(api/v1/groups#create)' do
+  # 変数宣言
+  let(:group) { build(:group) }
+
+  # 変数としては使わないがレコードが欲しい、予めログインしておきたい等
+  before do
+    @another_group = create(:group)
+  end
+
   context 'グループ新規作成が成功する' do
     it '新しいグループを作成する' do
-      group = build(:group)
       group_params = {name: group.name}
 
       # api/v1/groups#createへリクエストを送る
@@ -55,8 +63,7 @@ describe 'グループ作成機能(api/v1/groups#create)' do
       expect(json["errors"]).to include("グループ名は20文字以内で入力してください")
     end
     it 'グループ作成に失敗した場合はエラーメッセージを取得する(グループ名が重複の場合)' do
-      group = create(:group)
-      group_params = {name: group.name}
+      group_params = {name: @another_group.name}
 
       # api/v1/groups#createへリクエストを送る
       expect { post '/api/v1/groups.json', params: { group: group_params } }.to change(Group, :count).by(0)
