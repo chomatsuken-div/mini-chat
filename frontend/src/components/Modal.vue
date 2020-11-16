@@ -20,6 +20,13 @@
             <input class="input-submit" type="submit" value="登録">
           </form>
         </div>
+        <div class="modal-content" v-else-if="modalOption === 'update'">
+          <div class="title">グループ編集</div>
+          <form class="content" @submit.prevent="updateRequestGroup">
+            <input class="input-text" type="text" v-model="editGroup.name" placeholder="グループ名">
+            <input class="input-submit" type="submit" value="更新">
+          </form>
+        </div>
         <footer class="modal-footer">
           <slot name="footer">
             <button @click="$emit('close')" class="close-btn">Close</button>
@@ -41,7 +48,8 @@ axios.defaults.headers.common = {
 export default {
   props: [
    'groups',
-   'modalOption'
+   'modalOption',
+   'editGroup'
   ],
   data: function () {
     return {
@@ -68,7 +76,6 @@ export default {
             _this.$emit('addNewGroup', newGroupData);
           } else {
             _this.notice = {errors: response.data.errors};
-
           }
         })
         .catch(function(error){
@@ -77,6 +84,9 @@ export default {
       } else {
         _this.notice = {errors: ['グループ名を入力してください']};
       }
+    },
+    updateRequestGroup: function(e){
+
     }
   },
 }

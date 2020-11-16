@@ -1,8 +1,8 @@
 <template>
   <div id="main">
-    <modal @close="closeModal" @addNewGroup="addGroups" v-if="modal" v-bind:modalOption="modalOption"></modal>
+    <modal @close="closeModal" @addNewGroup="addGroups" v-if="modal" v-bind:modalOption="modalOption" v-bind:editGroup="editGroup"></modal>
     <sidebar v-bind:groups="groups" @createGroup="createGroup" @changeGroup="currentGroupChange"></sidebar>
-    <chat-container v-bind:groups="groups" v-bind:groupIndex="currentGroupIndex"></chat-container>
+    <chat-container v-bind:groups="groups" v-bind:groupIndex="currentGroupIndex" @updateGroup="updateGroup"></chat-container>
   </div>
 </template>
 
@@ -29,6 +29,7 @@ axios.defaults.headers.common = {
         modal: false,
         modalOption: '',
         currentGroupIndex: null,
+        editGroup : null,
         groups: []
       }
     },
@@ -51,6 +52,11 @@ axios.defaults.headers.common = {
       addGroups: function(group){
         this.groups.unshift(group);
         this.currentGroupIndex = 0;
+      },
+      updateGroup: function(index){
+        this.modal = true;
+        this.editGroup = this.groups[index];
+        this.modalOption = 'update';
       }
     },
     created() {
