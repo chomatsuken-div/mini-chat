@@ -18,6 +18,12 @@ class Api::V1::GroupsController < ApplicationController
   end
 
   def update
+    group = Group.find(params[:id])
+    if group.update(group_params)
+      render json: group, status: 200
+    else
+      render json: { errors: group.errors.full_messages }
+    end
   end
 
   private

@@ -1,21 +1,21 @@
 <template>
   <div id="main">
-    <modal @close="closeModal" @addNewGroup="addGroups" v-if="modal" v-bind:modalOption="modalOption" v-bind:editGroup="editGroup"></modal>
+    <modal v-if="modal" v-bind:groups="groups" v-bind:modalOption="modalOption" v-bind:editGroup="editGroup" @close="closeModal" @addNewGroup="addGroups"></modal>
     <sidebar v-bind:groups="groups" @createGroup="createGroup" @changeGroup="currentGroupChange"></sidebar>
     <chat-container v-bind:groups="groups" v-bind:groupIndex="currentGroupIndex" @updateGroup="updateGroup"></chat-container>
   </div>
 </template>
 
 <script>
-import Modal from './components/Modal.vue'
-import Sidebar from './components/Sidebar.vue'
-import ChatContainer from './components/ChatContainer.vue'
+import Modal from './components/Modal.vue';
+import Sidebar from './components/Sidebar.vue';
+import ChatContainer from './components/ChatContainer.vue';
 
 import axios from 'axios';
 
 axios.defaults.headers.common = {
     'X-Requested-With': 'XMLHttpRequest',
-    'X-CSRF-TOKEN' : document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+    'X-CSRF-TOKEN' : document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 };
 
   export default {
@@ -54,8 +54,13 @@ axios.defaults.headers.common = {
         this.currentGroupIndex = 0;
       },
       updateGroup: function(index){
+        const group = this.groups[index];
+        this.editGroup = {
+          id: group.id,
+          name: group.name,
+          index: index
+        };
         this.modal = true;
-        this.editGroup = this.groups[index];
         this.modalOption = 'update';
       }
     },
