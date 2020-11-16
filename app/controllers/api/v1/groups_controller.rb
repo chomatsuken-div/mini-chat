@@ -17,6 +17,9 @@ class Api::V1::GroupsController < ApplicationController
     end
   end
 
+  def update
+  end
+
   private
     def group_params
       params.require(:group).permit(:name)

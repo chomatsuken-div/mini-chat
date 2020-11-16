@@ -86,7 +86,25 @@ export default {
       }
     },
     updateRequestGroup: function(e){
-
+      const _this = this;
+      const group_index = _this.editGroup.id;
+      const API_V1_GROUP_PATH_JSON = `/api/v1/groups/${group_index}.json`;
+      if (_this.editGroup.name !== ''){
+        const group = {name: _this.editGroup.name};
+        axios.patch(API_V1_GROUP_PATH_JSON, group)
+        .then(function(response){
+          if (!response.data.errors){
+            _this.notice = {success: ['グループ更新が成功しました']};
+          } else {
+            _this.notice = {errors: response.data.errors};
+          }
+        })
+        .catch(function(error){
+          alert(error.message);
+        });
+      } else {
+        _this.notice = {errors: ['グループ名を入力してください']};
+      }
     }
   },
 }

@@ -68,6 +68,7 @@ axios.defaults.headers.common = {
           const groups_array = [];
           response_groups.forEach(function(group){
             const molding_group = {
+              id: group.id,
               name: group.name,
               unread_count: 0,
               messages: []
