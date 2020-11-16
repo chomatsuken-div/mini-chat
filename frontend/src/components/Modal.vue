@@ -53,27 +53,28 @@ export default {
   },
   methods: {
     createRequestGroup: function(e){
-      if (this.newGroup.name != ''){
-        var group = {name: this.newGroup.name};
-        axios.post(this.$API_V1_GROUPS_PATH_JSON, group)
+      const _this = this;
+      if (_this.newGroup.name != ''){
+        var group = {name: _this.newGroup.name};
+        axios.post(_this.$API_V1_GROUPS_PATH_JSON, group)
         .then(function(response){
-          if (response.data.errors){
-            this.notice = {errors: response.data.errors}
+          if (!response.data.errors){
+            _this.notice = {errors: response.data.errors}
           } else {
             var newGroupData = {
               name: response.data.name,
               unread_count: 0,
               messages: []
             };
-            this.notice = {success: ['グループ作成が成功しました']}
-            this.$emit('addNewGroup', newGroupData);
+            _this.notice = {success: ['グループ作成が成功しました']}
+            _this.$emit('addNewGroup', newGroupData);
           }
-        }.bind(this))
+        })
         .catch(function(error){
           alert(error.message);
         });
       } else {
-        this.notice = {errors: ['グループ名を入力してください']}
+        _this.notice = {errors: ['グループ名を入力してください']}
       }
     }
   },

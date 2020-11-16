@@ -54,7 +54,8 @@ axios.defaults.headers.common = {
       }
     },
     created() {
-      axios.get(this.$API_V1_GROUPS_PATH_JSON)
+      const _this = this;
+      axios.get(_this.$API_V1_GROUPS_PATH_JSON)
       .then(function(response){
         if (!response.data.errors){
           const response_groups = response.data;
@@ -67,9 +68,9 @@ axios.defaults.headers.common = {
             };
             groups_array.push(molding_group);
           })
-          this.$data.groups = groups_array;
+          _this.$data.groups = groups_array;
         }
-      }.bind(this))
+      })
       .catch(function(error){
         alert(error.message);
       });
