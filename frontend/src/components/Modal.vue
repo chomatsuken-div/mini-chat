@@ -55,7 +55,7 @@ export default {
     createRequestGroup: function(e){
       if (this.newGroup.name != ''){
         var group = {name: this.newGroup.name};
-        axios.post('/api/v1/groups.json', group)
+        axios.post(this.$API_V1_GROUPS_PATH_JSON, group)
         .then(function(response){
           if (response.data.errors){
             this.notice = {errors: response.data.errors}

@@ -54,7 +54,7 @@ axios.defaults.headers.common = {
       }
     },
     created() {
-      axios.get('/api/v1/groups.json')
+      axios.get(this.$API_V1_GROUPS_PATH_JSON)
       .then(function(response){
         if (!response.data.errors){
           const response_groups = response.data;
