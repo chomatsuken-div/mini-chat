@@ -2,10 +2,10 @@
   <transition name="modal" appear>
     <div class="modal modal-overlay">
       <div class="modal-window">
-        <div class="modal-content" v-if="notice != null">
+        <div class="modal-content" v-if="notice !== null">
           <div class="title">通知</div>
           <div class="content">
-            <ul v-if="notice.success != null">
+            <ul v-if="notice.success !== null">
               <li class="success-txt" v-for="message in notice.success">{{message}}</li>
             </ul>
             <ul v-else-if="notice.errors != null">
@@ -13,7 +13,7 @@
             </ul>
           </div>
         </div>
-        <div class="modal-content" v-else-if="modalOption == 'create'">
+        <div class="modal-content" v-else-if="modalOption === 'create'">
           <div class="title">グループ新規作成</div>
           <form class="content" @submit.prevent="createRequestGroup">
             <input class="input-text" type="text" v-model="newGroup.name" placeholder="グループ名">
@@ -54,7 +54,7 @@ export default {
   methods: {
     createRequestGroup: function(e){
       const _this = this;
-      if (_this.newGroup.name != ''){
+      if (_this.newGroup.name !== ''){
         const group = {name: _this.newGroup.name};
         axios.post(_this.$API_V1_GROUPS_PATH_JSON, group);
         .then(function(response){

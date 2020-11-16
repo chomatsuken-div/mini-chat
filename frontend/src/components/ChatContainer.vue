@@ -1,6 +1,6 @@
 <template>
   <div class="chat-conteiner">
-    <div class="chat-conteiner__content" v-if="groupIndex != null">
+    <div class="chat-conteiner__content" v-if="groupIndex !== null">
       <div class="chat-conteiner__content__group-box">
         <div class="chat-conteiner__content__group-box__left">
           <div class="chat-conteiner__content__group-box__left__name">{{groups[groupIndex].name}}</div>

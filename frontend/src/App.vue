@@ -75,7 +75,6 @@ axios.defaults.headers.common = {
         alert(error.message);
       });
     }
-
   }
 </script>
 
