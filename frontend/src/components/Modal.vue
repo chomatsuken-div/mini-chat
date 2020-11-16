@@ -56,7 +56,7 @@ export default {
       const _this = this;
       if (_this.newGroup.name !== ''){
         const group = {name: _this.newGroup.name};
-        axios.post(_this.$API_V1_GROUPS_PATH_JSON, group);
+        axios.post(_this.$API_V1_GROUPS_PATH_JSON, group)
         .then(function(response){
           if (!response.data.errors){
             const newGroupData = {
