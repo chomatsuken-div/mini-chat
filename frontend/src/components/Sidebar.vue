@@ -47,7 +47,7 @@ export default {
       border-radius: 999px;
     }
     button::before {
-      content: "\02b";
+      content: '\02b';
       font-size: 1.6rem;
       color: #fff;
     }

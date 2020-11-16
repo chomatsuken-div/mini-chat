@@ -46,14 +46,14 @@ export default {
   data: function () {
     return {
       newGroup: {
-        name: ""
+        name: ''
       },
       notice: null
     }
   },
   methods: {
     createRequestGroup: function(e){
-      if (this.newGroup.name != ""){
+      if (this.newGroup.name != ''){
         var group = {name: this.newGroup.name};
         axios.post('/api/v1/groups.json', group)
         .then(function(response){

@@ -27,7 +27,7 @@ axios.defaults.headers.common = {
     data: function () {
       return {
         modal: false,
-        modalOption: "",
+        modalOption: '',
         currentGroupIndex: null,
         groups: []
       }
@@ -40,13 +40,13 @@ axios.defaults.headers.common = {
         this.modal = false;
       },
       currentGroupChange: function (index) {
-        var group = this.groups[index];
+        const group = this.groups[index];
         group.unread_count = 0;
         this.currentGroupIndex = index;
       },
       createGroup: function(e){
         this.modal = true;
-        this.modalOption = "create";
+        this.modalOption = 'create';
       },
       addGroups: function(group){
         this.groups.unshift(group);
@@ -57,10 +57,10 @@ axios.defaults.headers.common = {
       axios.get('/api/v1/groups.json')
       .then(function(response){
         if (!response.data.errors){
-          var response_groups = response.data;
-          var groups_array = [];
+          const response_groups = response.data;
+          const groups_array = [];
           response_groups.forEach(function(group){
-            var molding_group = {
+            const molding_group = {
               name: group.name,
               unread_count: 0,
               messages: []
