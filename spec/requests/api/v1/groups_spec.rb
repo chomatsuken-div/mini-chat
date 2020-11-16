@@ -78,14 +78,14 @@ RSpec.describe "Api::V1::Groups", type: :request do
 
   describe 'グループ更新機能(api/v1/groups#update)' do
     let(:group) { create(:group) }
-    
+
     before do
       @api_v1_group_path_json = api_v1_group_path(group.id) + '.json'
       @another_group = create(:group)
     end
 
     context 'グループ更新が成功する' do
-      it 'グループ名を変更に成功する' do
+      it 'グループ名変更に成功する' do
         group_params = {name: (group.name + 'test')}
         # api/v1/groups#updateへリクエストを送る
         patch @api_v1_group_path_json, params: { group: group_params }

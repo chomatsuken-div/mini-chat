@@ -90,8 +90,8 @@ export default {
     },
     updateRequestGroup: function(index){
       const _this = this;
-      const group_index = _this.editGroup.id;
-      const API_V1_GROUP_PATH_JSON = `/api/v1/groups/${group_index}.json`;
+      const group_id = _this.editGroup.id;
+      const API_V1_GROUP_PATH_JSON = `/api/v1/groups/${group_id}.json`;
       if (_this.editGroup.name !== ''){
         const group_params = {name: _this.editGroup.name};
         axios.patch(API_V1_GROUP_PATH_JSON, group_params)
