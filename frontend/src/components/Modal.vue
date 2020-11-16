@@ -42,7 +42,7 @@ import axios from 'axios';
 
 axios.defaults.headers.common = {
     'X-Requested-With': 'XMLHttpRequest',
-    'X-CSRF-TOKEN' : document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+    'X-CSRF-TOKEN' : document.querySelector('meta[name="csrf-token"]').getAttribute('content')
 };
 
 export default {
@@ -70,6 +70,7 @@ export default {
         .then(function(response){
           if (!response.data.errors){
             const newGroupData = {
+              id: response.data.id,
               name: response.data.name,
               unread_count: 0,
               messages: []
@@ -96,8 +97,7 @@ export default {
         axios.patch(API_V1_GROUP_PATH_JSON, group_params)
         .then(function(response){
           if (!response.data.errors){
-            const group = response.data;
-            _this.groups[index].name = group.name;
+            _this.groups[index].name = response.data.name;
             _this.notice = {success: ['グループ更新が成功しました']};
           } else {
             _this.notice = {errors: response.data.errors};
