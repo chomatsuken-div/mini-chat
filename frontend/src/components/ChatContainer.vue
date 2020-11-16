@@ -1,15 +1,15 @@
 <template>
   <div class="chat-conteiner">
-    <div class="chat-conteiner__content" v-for="(group, index) in groups" :key="index" v-if="group.curernt_group == true">
+    <div class="chat-conteiner__content" v-if="groupIndex !== null">
       <div class="chat-conteiner__content__group-box">
         <div class="chat-conteiner__content__group-box__left">
-          <div class="chat-conteiner__content__group-box__left__name">{{group.name}}</div>
+          <div class="chat-conteiner__content__group-box__left__name">{{groups[groupIndex].name}}</div>
           <button class="chat-conteiner__content__group-box__left__edit">編集</button>
         </div>
         <button class="chat-conteiner__content__group-box__right">チャットグループを削除する</button>
       </div>
       <ul class="chat-conteiner__content__messages">
-        <li v-for="message in group.messages">
+        <li v-for="message in groups[groupIndex].messages">
           {{message.text}}
         </li>
       </ul>
@@ -25,7 +25,8 @@
 
 export default {
   props: [
-   'groups'
+   'groups',
+   'groupIndex'
   ],
   data: function () {
     return {
@@ -68,6 +69,9 @@ export default {
       height: calc(100% - 146px);
       margin: 30px;
       overflow: auto;
+      &::-webkit-scrollbar {
+        display:none;
+      }
       li {
         padding-bottom: 20px;
       }

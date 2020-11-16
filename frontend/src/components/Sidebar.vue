@@ -1,7 +1,7 @@
 <template>
   <div class="sidebar">
     <div class="sidebar__add-group">
-      <button></button>
+      <button @click="$emit('createGroup')"></button>
     </div>
     <ul class="sidebar__groups">
       <li class="sidebar__groups__list" v-for="(group, index) in groups" :key="index">
@@ -23,8 +23,8 @@ export default {
     }
   },
   methods: {
-    selectGroup: function (index) {
-      this.$emit('changeGroup', index)
+    selectGroup: function(index){
+      this.$emit('changeGroup', index);
     }
   }
 }
@@ -38,6 +38,7 @@ export default {
   color: #fff;
   &__add-group {
     height: 60px;
+    margin-bottom: 30px;
     button {
       width: 35px;
       height: 35px;
@@ -46,13 +47,18 @@ export default {
       border-radius: 999px;
     }
     button::before {
-      content: "\02b";
+      content: '\02b';
       font-size: 1.6rem;
       color: #fff;
     }
   }
   &__groups {
-    padding: 30px;
+    height: calc(100% - 90px);
+    overflow: scroll;
+    padding: 0 30px 30px;
+    &::-webkit-scrollbar {
+      display:none;
+    }
     &__list {
       height: 50px;
       display: flex;

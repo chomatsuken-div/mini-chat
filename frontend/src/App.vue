@@ -1,93 +1,79 @@
 <template>
   <div id="main">
-    <sidebar v-bind:groups="groups" @changeGroup="currentGroupChange"></sidebar>
-    <chat-container v-bind:groups="groups"></chat-container>
+    <modal @close="closeModal" @addNewGroup="addGroups" v-if="modal" v-bind:modalOption="modalOption"></modal>
+    <sidebar v-bind:groups="groups" @createGroup="createGroup" @changeGroup="currentGroupChange"></sidebar>
+    <chat-container v-bind:groups="groups" v-bind:groupIndex="currentGroupIndex"></chat-container>
   </div>
 </template>
 
 <script>
+import Modal from './components/Modal.vue'
 import Sidebar from './components/Sidebar.vue'
 import ChatContainer from './components/ChatContainer.vue'
 
+import axios from 'axios';
+
+axios.defaults.headers.common = {
+    'X-Requested-With': 'XMLHttpRequest',
+    'X-CSRF-TOKEN' : document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+};
+
   export default {
     components:{
+      Modal,
       Sidebar,
       ChatContainer
     },
     data: function () {
       return {
-        groups: [
-          {
-            curernt_group: true,
-            name: "チャットグループ名",
-            unread_count: 2,
-            messages: [
-              {
-                text: "メッセージ"
-              },
-              {
-                text: "メッセージ"
-              },
-              {
-                text: "メッセージ"
-              },
-            ]
-          },
-          {
-            curernt_group: false,
-            name: "チャットグループ名",
-            unread_count: 0,
-            messages: [
-              {
-                text: "メッセージ"
-              },
-              {
-                text: "メッセージ"
-              },
-            ]
-          },
-          {
-            curernt_group: false,
-            name: "チャットグループ名",
-            unread_count: 0,
-            messages: [
-              {
-                text: "メッセージ"
-              },
-            ]
-          },
-          {
-            curernt_group: false,
-            name: "チャットグループ名",
-            unread_count: 0,
-            messages: [
-              {
-                text: "メッセージ"
-              },
-              {
-                text: "メッセージ"
-              },
-              {
-                text: "メッセージ"
-              },
-              {
-                text: "メッセージ"
-              },
-            ]
-          },
-        ]
+        modal: false,
+        modalOption: '',
+        currentGroupIndex: null,
+        groups: []
       }
     },
     methods: {
+      openModal() {
+        this.modal = true;
+      },
+      closeModal() {
+        this.modal = false;
+      },
       currentGroupChange: function (index) {
-        var groups = this.groups
-        groups.forEach(function(group){
-          group.curernt_group = false
-        })
-        var group = groups[index]
-        group.curernt_group = true
-        group.unread_count = 0
+        const group = this.groups[index];
+        group.unread_count = 0;
+        this.currentGroupIndex = index;
+      },
+      createGroup: function(e){
+        this.modal = true;
+        this.modalOption = 'create';
+      },
+      addGroups: function(group){
+        this.groups.unshift(group);
+        this.currentGroupIndex = 0;
       }
+    },
+    created() {
+      const _this = this;
+      axios.get(_this.$API_V1_GROUPS_PATH_JSON)
+      .then(function(response){
+        if (!response.data.errors){
+          const response_groups = response.data;
+          const groups_array = [];
+          response_groups.forEach(function(group){
+            const molding_group = {
+              name: group.name,
+              unread_count: 0,
+              messages: []
+            };
+            groups_array.push(molding_group);
+          })
+          _this.$data.groups = groups_array;
+        }
+      })
+      .catch(function(error){
+        alert(error.message);
+      });
     }
   }
 </script>
