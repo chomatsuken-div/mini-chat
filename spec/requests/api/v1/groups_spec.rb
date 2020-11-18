@@ -212,7 +212,6 @@ RSpec.describe "Api::V1::Groups", type: :request do
     subject {delete @api_v1_group_path_json} # api/v1/groups#destroyへリクエストを送る
 
     context '削除に成功する場合' do
-
       it 'ステータス200を返す' do
         subject
         expect(response.status).to eq(200)
@@ -224,7 +223,6 @@ RSpec.describe "Api::V1::Groups", type: :request do
     end
 
     context '削除に失敗する場合' do
-
       context '存在しないグループを削除した場合' do
         before do
           subject # グループ初回削除

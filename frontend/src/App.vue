@@ -75,7 +75,7 @@ axios.defaults.headers.common = {
         this.modalOption = 'delete';
       },
       deleteGroupFromGroups: function(index){
-        const group = this.groups.splice(index, 1);
+        this.groups.splice(index, 1);
         this.currentGroupIndex = null;
       }
     },
