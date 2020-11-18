@@ -20,6 +20,13 @@
             <input class="input-submit" type="submit" value="登録">
           </form>
         </div>
+        <div class="modal-content" v-else-if="modalOption === 'update'">
+          <div class="title">グループ編集</div>
+          <form class="content" @submit.prevent="updateRequestGroup(editGroup.index)">
+            <input class="input-text" type="text" v-model="editGroup.name" placeholder="グループ名">
+            <input class="input-submit" type="submit" value="更新">
+          </form>
+        </div>
         <footer class="modal-footer">
           <slot name="footer">
             <button @click="$emit('close')" class="close-btn">Close</button>
@@ -40,8 +47,9 @@ axios.defaults.headers.common = {
 
 export default {
   props: [
-   'groups',
-   'modalOption'
+    'groups',
+    'modalOption',
+    'editGroup'
   ],
   data: function () {
     return {
@@ -51,15 +59,18 @@ export default {
       notice: null
     }
   },
+  created() {
+  },
   methods: {
     createRequestGroup: function(e){
       const _this = this;
       if (_this.newGroup.name !== ''){
-        const group = {name: _this.newGroup.name};
-        axios.post(_this.$API_V1_GROUPS_PATH_JSON, group)
+        const group_params = {name: _this.newGroup.name};
+        axios.post(_this.$API_V1_GROUPS_PATH_JSON, group_params)
         .then(function(response){
           if (!response.data.errors){
             const newGroupData = {
+              id: response.data.id,
               name: response.data.name,
               unread_count: 0,
               messages: []
@@ -68,7 +79,28 @@ export default {
             _this.$emit('addNewGroup', newGroupData);
           } else {
             _this.notice = {errors: response.data.errors};
-
+          }
+        })
+        .catch(function(error){
+          alert(error.message);
+        });
+      } else {
+        _this.notice = {errors: ['グループ名を入力してください']};
+      }
+    },
+    updateRequestGroup: function(index){
+      const _this = this;
+      const group_id = _this.editGroup.id;
+      const API_V1_GROUP_PATH_JSON = `/api/v1/groups/${group_id}.json`;
+      if (_this.editGroup.name !== ''){
+        const group_params = {name: _this.editGroup.name};
+        axios.patch(API_V1_GROUP_PATH_JSON, group_params)
+        .then(function(response){
+          if (!response.data.errors){
+            _this.groups[index].name = response.data.name;
+            _this.notice = {success: ['グループ更新が成功しました']};
+          } else {
+            _this.notice = {errors: response.data.errors};
           }
         })
         .catch(function(error){

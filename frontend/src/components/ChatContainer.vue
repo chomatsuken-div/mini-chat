@@ -4,7 +4,7 @@
       <div class="chat-conteiner__content__group-box">
         <div class="chat-conteiner__content__group-box__left">
           <div class="chat-conteiner__content__group-box__left__name">{{groups[groupIndex].name}}</div>
-          <button class="chat-conteiner__content__group-box__left__edit">編集</button>
+          <button class="chat-conteiner__content__group-box__left__edit" @click="editGroup(groupIndex)">編集</button>
         </div>
         <button class="chat-conteiner__content__group-box__right">チャットグループを削除する</button>
       </div>
@@ -31,7 +31,12 @@ export default {
   data: function () {
     return {
     }
-  }
+  },
+  methods: {
+    editGroup: function(index){
+      this.$emit('updateGroup', index);
+    }
+  },
 }
 </script>
 

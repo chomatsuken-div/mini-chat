@@ -1,15 +1,15 @@
 <template>
   <div id="main">
-    <modal @close="closeModal" @addNewGroup="addGroups" v-if="modal" v-bind:modalOption="modalOption"></modal>
+    <modal v-if="isShoewModal" v-bind:groups="groups" v-bind:modalOption="modalOption" v-bind:editGroup="editGroup" @close="closeModal" @addNewGroup="addGroups"></modal>
     <sidebar v-bind:groups="groups" @createGroup="createGroup" @changeGroup="currentGroupChange"></sidebar>
-    <chat-container v-bind:groups="groups" v-bind:groupIndex="currentGroupIndex"></chat-container>
+    <chat-container v-bind:groups="groups" v-bind:groupIndex="currentGroupIndex" @updateGroup="updateGroup"></chat-container>
   </div>
 </template>
 
 <script>
-import Modal from './components/Modal.vue'
-import Sidebar from './components/Sidebar.vue'
-import ChatContainer from './components/ChatContainer.vue'
+import Modal from './components/Modal.vue';
+import Sidebar from './components/Sidebar.vue';
+import ChatContainer from './components/ChatContainer.vue';
 
 import axios from 'axios';
 
@@ -26,18 +26,19 @@ axios.defaults.headers.common = {
     },
     data: function () {
       return {
-        modal: false,
+        isShoewModal: false,
         modalOption: '',
         currentGroupIndex: null,
+        editGroup : null,
         groups: []
       }
     },
     methods: {
       openModal() {
-        this.modal = true;
+        this.isShoewModal = true;
       },
       closeModal() {
-        this.modal = false;
+        this.isShoewModal = false;
       },
       currentGroupChange: function (index) {
         const group = this.groups[index];
@@ -45,12 +46,22 @@ axios.defaults.headers.common = {
         this.currentGroupIndex = index;
       },
       createGroup: function(e){
-        this.modal = true;
+        this.isShoewModal = true;
         this.modalOption = 'create';
       },
       addGroups: function(group){
         this.groups.unshift(group);
         this.currentGroupIndex = 0;
+      },
+      updateGroup: function(index){
+        const group = this.groups[index];
+        this.editGroup = {
+          id: group.id,
+          name: group.name,
+          index: index
+        };
+        this.isShoewModal = true;
+        this.modalOption = 'update';
       }
     },
     created() {
@@ -62,6 +73,7 @@ axios.defaults.headers.common = {
           const groups_array = [];
           response_groups.forEach(function(group){
             const molding_group = {
+              id: group.id,
               name: group.name,
               unread_count: 0,
               messages: []

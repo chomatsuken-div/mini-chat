@@ -1,78 +1,203 @@
 require 'rails_helper'
 
 RSpec.describe "Api::V1::Groups", type: :request do
-
   before do
-    @api_v1_groups_path_json = api_v1_groups_path + '.json'
+    @api_v1_groups_path_json = api_v1_groups_path + '.json' # api/vi/groups#index,create用のURLを生成
   end
 
   describe 'グループ一覧機能(api/v1/groups#index)' do
+    subject {get @api_v1_groups_path_json} # api/v1/groups#indexへリクエストを送る
+  
+    context '全データ取得に成功する場合' do
+      before do
+        create_list(:group, 5)
+        subject
+        @json = JSON.parse(response.body)
+      end
 
-    context 'グループの取得が成功する' do
-      it '全てのグループを取得する' do
-        create_list(:group, 10)
-        # api/v1/groups#indexへリクエストを送る。
-        get @api_v1_groups_path_json
-        json = JSON.parse(response.body)
+      it 'ステータス200を返す' do
         expect(response.status).to eq(200)
-        expect(json.length).to eq(10)
+      end
+
+      it '全グループ数を返す' do
+        expect(@json.length).to eq(5)
       end
     end
 
-    context 'グループの取得が失敗する' do
-      it 'グループが存在しない場合はエラーメッセージを取得する' do
-        # api/v1/groups#indexへリクエストを送る
-        get @api_v1_groups_path_json
-        json = JSON.parse(response.body)
+    context '全データ取得に失敗する場合' do
+      before do
+        subject
+        @json = JSON.parse(response.body)
+      end
+
+      it 'ステータス200を返す' do
         expect(response.status).to eq(200)
-        expect(json["errors"]).to eq("グループが存在しません")
+      end
+
+      it 'グループが存在しない場合、エラーメッセージを返す' do
+        expect(@json["errors"]).to eq("グループが存在しません")
       end
     end
   end
 
   describe 'グループ作成機能(api/v1/groups#create)' do
-    # 変数宣言
     let(:group) { build(:group) }
-    # 変数としては使わないがレコードが欲しい、予めログインしておきたい等
+
+    subject { post @api_v1_groups_path_json, params: { group: @group_params } } # api/v1/groups#createへリクエストを送る
+
+    context '新規作成に成功する場合' do
+      before do
+        @group_params = {name: group.name}
+        # beforeでsubjectを呼び出すとexpect前にグループが生成され、グループの数が+1されるのテストが成功しないため記述しない
+      end
+
+      it 'ステータス200を返す' do
+        subject
+        expect(response.status).to eq(200)
+      end
+
+      it 'グループの数が+1される' do
+        expect {subject}.to change(Group, :count).by(1)
+      end
+    end
+
+    context '新規作成に失敗する場合' do
+      context 'グループ名が空で入力された場合' do
+        before do
+          @group_params = {name: ''}
+          subject
+          @json = JSON.parse(response.body)
+        end
+
+        it 'ステータス200を返す' do
+          expect(response.status).to eq(200)
+        end
+
+        it 'グループの数が±0を返す' do
+          expect {subject}.to change(Group, :count).by(0)
+        end
+
+        it 'エラーメッセージを返す' do
+          expect(@json["errors"]).to include("グループ名を入力してください")
+        end
+      end
+
+      context 'グループ名が21文字以上で入力された場合' do
+        before do
+          @group_params = {name: 'a' * 21}
+          subject
+          @json = JSON.parse(response.body)
+        end
+
+        it 'ステータス200を返す' do
+          expect(response.status).to eq(200)
+        end
+
+        it 'グループの数が±0を返す' do
+          expect {subject}.to change(Group, :count).by(0)
+        end
+
+        it 'エラーメッセージを返す' do
+          expect(@json["errors"]).to include("グループ名は20文字以内で入力してください")
+        end
+      end
+
+      context 'グループ名が既に存在している場合' do
+        before do
+          another_group = create(:group)
+          @group_params = {name: another_group.name}
+          subject
+          @json = JSON.parse(response.body)
+        end
+
+        it 'ステータス200を返す' do
+          expect(response.status).to eq(200)
+        end
+
+        it 'グループの数が±0を返す' do
+          expect {subject}.to change(Group, :count).by(0)
+        end
+
+        it 'エラーメッセージを返す' do
+          expect(@json["errors"]).to include("グループ名はすでに存在します")
+        end
+      end
+    end
+  end
+
+  describe 'グループ更新機能(api/v1/groups#update)' do
+    let(:group) { create(:group) }
+
     before do
-      @another_group = create(:group)
+      @api_v1_group_path_json = api_v1_group_path(group.id) + '.json' # api/v1/groups#update用のURLを生成
     end
 
-    context 'グループ新規作成が成功する' do
-      it '新しいグループを作成する' do
-        group_params = {name: group.name}
-        # api/v1/groups#createへリクエストを送る
-        expect { post @api_v1_groups_path_json, params: { group: group_params } }.to change(Group, :count).by(1)
+    subject {patch @api_v1_group_path_json, params: { group: @group_params }} # api/v1/groups#updateへリクエストを送る
+
+    context 'グループ更新に成功する場合' do
+      before do
+        @group_params = {name: (group.name + 'test')}
+        subject
+        @json = JSON.parse(response.body)
+      end
+
+      it 'ステータス200を返す' do
         expect(response.status).to eq(200)
+      end
+
+      it 'リクエストで送られたグループ名を返す' do
+        expect(@json["name"]).to eq(@group_params[:name])
       end
     end
 
-    context 'グループ新規作成が失敗する' do
-      it 'グループ作成に失敗した場合はエラーメッセージを取得する(グループ名が空の場合)' do
-        group_params = {name: ""}
-        # api/v1/groups#createへリクエストを送る
-        expect { post @api_v1_groups_path_json, params: { group: group_params } }.to change(Group, :count).by(0)
-        json = JSON.parse(response.body)
-        expect(response.status).to eq(200)
-        expect(json["errors"]).to include("グループ名を入力してください")
+    context 'グループ更新に失敗する場合' do
+      context 'グループ名が空で入力された場合' do
+        before do
+          @group_params = {name: ''}
+          subject
+          @json = JSON.parse(response.body)
+        end
+
+        it 'ステータス200を返す' do
+          expect(response.status).to eq(200)
+        end
+  
+        it 'エラーメッセージを返す' do
+          expect(@json["errors"]).to include("グループ名を入力してください")
+        end
       end
 
-      it 'グループ作成に失敗した場合はエラーメッセージを取得する(グループ名が21文字以上の場合)' do
-        group_params = {name: "a" * 21}
-        # api/v1/groups#createへリクエストを送る
-        expect { post @api_v1_groups_path_json, params: { group: group_params } }.to change(Group, :count).by(0)
-        json = JSON.parse(response.body)
-        expect(response.status).to eq(200)
-        expect(json["errors"]).to include("グループ名は20文字以内で入力してください")
+      context 'グループ名が21文字以上で入力された場合' do
+        before do
+          @group_params = {name: 'a' * 21}
+          subject
+          @json = JSON.parse(response.body)
+        end
+
+        it 'ステータス200を返す' do
+          expect(response.status).to eq(200)
+        end
+  
+        it 'エラーメッセージを返す' do
+          expect(@json["errors"]).to include("グループ名は20文字以内で入力してください")
+        end
       end
 
-      it 'グループ作成に失敗した場合はエラーメッセージを取得する(グループ名が重複の場合)' do
-        group_params = {name: @another_group.name}
-        # api/v1/groups#createへリクエストを送る
-        expect { post @api_v1_groups_path_json, params: { group: group_params } }.to change(Group, :count).by(0)
-        json = JSON.parse(response.body)
-        expect(response.status).to eq(200)
-        expect(json["errors"]).to include("グループ名はすでに存在します")
+      context 'グループ名が既に存在していた場合' do
+        before do
+          another_group = create(:group)
+          @group_params = {name: another_group.name}
+          subject
+          @json = JSON.parse(response.body)
+        end
+
+        it 'ステータス200を返す' do
+          expect(response.status).to eq(200)
+        end
+  
+        it 'エラーメッセージを返す' do
+          expect(@json["errors"]).to include("グループ名はすでに存在します")
+        end
       end
     end
   end
