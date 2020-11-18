@@ -201,4 +201,44 @@ RSpec.describe "Api::V1::Groups", type: :request do
       end
     end
   end
+
+  describe 'グループ削除機能(api/v1/groups#destroy)' do
+    let(:group) { create(:group) }
+
+    before do
+      @api_v1_group_path_json = api_v1_group_path(group.id) + '.json' # api/v1/groups#destroy用のURLを生成
+    end
+
+    subject {delete @api_v1_group_path_json} # api/v1/groups#destroyへリクエストを送る
+
+    context '削除に成功する場合' do
+
+      it 'ステータス200を返す' do
+        subject
+        expect(response.status).to eq(200)
+      end
+
+      it 'グループの数が-1を返す' do
+        expect {subject}.to change(Group, :count).by(-1)
+      end
+    end
+
+    context '削除に失敗する場合' do
+
+      context '存在しないグループを削除した場合' do
+        before do
+          subject # グループ初回削除
+        end
+
+        it 'ステータス200を返す' do
+          subject
+          expect(response.status).to eq(200)
+        end
+
+        it 'グループの数が±0を返す' do
+          expect {subject}.to change(Group, :count).by(0)
+        end
+      end
+    end
+  end
 end

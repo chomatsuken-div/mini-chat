@@ -31,7 +31,8 @@ class Api::V1::GroupsController < ApplicationController
     if group.destroy
       render json: { status: 200 }
     else
-      render json: { errors: group.errors.full_messages }
+      binding.pry
+      render json: { errors: "グループの削除に失敗しました" }
     end
   end
 
