@@ -1,8 +1,8 @@
 <template>
   <div id="main">
-    <modal v-if="isShoewModal" v-bind:groups="groups" v-bind:modalOption="modalOption" v-bind:editGroup="editGroup" v-bind:deleteGroup="deleteGroup" @close="closeModal" @addNewGroup="addGroups"></modal>
+    <modal v-if="isShoewModal" v-bind:groups="groups" v-bind:modalOption="modalOption" v-bind:editGroup="editGroup" v-bind:deleteGroup="deleteGroup" @close="closeModal" @addNewGroup="addGroups" @deleteGroupFromGroups="deleteGroupFromGroups"></modal>
     <sidebar v-bind:groups="groups" @createGroup="createGroup" @changeGroup="currentGroupChange"></sidebar>
-    <chat-container v-bind:groups="groups" v-bind:groupIndex="currentGroupIndex" @updateGroup="updateGroup" @deleteGroup="deleteGroup"></chat-container>
+    <chat-container v-bind:groups="groups" v-bind:groupIndex="currentGroupIndex" @updateGroup="updateGroup" @selectedDeleteGroup="selectedDeleteGroup"></chat-container>
   </div>
 </template>
 
@@ -30,6 +30,7 @@ axios.defaults.headers.common = {
         modalOption: '',
         currentGroupIndex: null,
         editGroup : null,
+        deleteGroup: null,
         groups: []
       }
     },
@@ -63,7 +64,7 @@ axios.defaults.headers.common = {
         this.isShoewModal = true;
         this.modalOption = 'update';
       },
-      deleteGroup: function(index){
+      selectedDeleteGroup: function(index){
         const group = this.groups[index];
         this.deleteGroup = {
           id: group.id,
@@ -73,6 +74,10 @@ axios.defaults.headers.common = {
         this.isShoewModal = true;
         this.modalOption = 'delete';
       },
+      deleteGroupFromGroups: function(index){
+        const group = this.groups.splice(index, 1);
+        this.currentGroupIndex = null;
+      }
     },
     created() {
       const _this = this;

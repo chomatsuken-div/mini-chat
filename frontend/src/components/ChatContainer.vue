@@ -37,7 +37,7 @@ export default {
       this.$emit('updateGroup', index);
     },
     deleteGroup: function(index){
-      this.$emit('deleteGroup', index);
+      this.$emit('selectedDeleteGroup', index);
     },
   },
 }

@@ -126,6 +126,7 @@ export default {
       .then(function(response){
         if (!response.data.errors){
           _this.notice = {success: ['グループ削除が成功しました']};
+          _this.$emit('deleteGroupFromGroups', index);
         } else {
           _this.notice = {errors: response.data.errors};
         }
