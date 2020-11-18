@@ -1,6 +1,6 @@
 <template>
   <div id="main">
-    <modal v-if="modal" v-bind:groups="groups" v-bind:modalOption="modalOption" v-bind:editGroup="editGroup" @close="closeModal" @addNewGroup="addGroups"></modal>
+    <modal v-if="isShoewModal" v-bind:groups="groups" v-bind:modalOption="modalOption" v-bind:editGroup="editGroup" @close="closeModal" @addNewGroup="addGroups"></modal>
     <sidebar v-bind:groups="groups" @createGroup="createGroup" @changeGroup="currentGroupChange"></sidebar>
     <chat-container v-bind:groups="groups" v-bind:groupIndex="currentGroupIndex" @updateGroup="updateGroup"></chat-container>
   </div>
@@ -26,7 +26,7 @@ axios.defaults.headers.common = {
     },
     data: function () {
       return {
-        modal: false,
+        isShoewModal: false,
         modalOption: '',
         currentGroupIndex: null,
         editGroup : null,
@@ -35,10 +35,10 @@ axios.defaults.headers.common = {
     },
     methods: {
       openModal() {
-        this.modal = true;
+        this.isShoewModal = true;
       },
       closeModal() {
-        this.modal = false;
+        this.isShoewModal = false;
       },
       currentGroupChange: function (index) {
         const group = this.groups[index];
@@ -46,7 +46,7 @@ axios.defaults.headers.common = {
         this.currentGroupIndex = index;
       },
       createGroup: function(e){
-        this.modal = true;
+        this.isShoewModal = true;
         this.modalOption = 'create';
       },
       addGroups: function(group){
@@ -60,7 +60,7 @@ axios.defaults.headers.common = {
           name: group.name,
           index: index
         };
-        this.modal = true;
+        this.isShoewModal = true;
         this.modalOption = 'update';
       }
     },
