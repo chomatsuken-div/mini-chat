@@ -1,8 +1,8 @@
 <template>
   <div id="main">
-    <modal v-if="isShoewModal" v-bind:groups="groups" v-bind:modalOption="modalOption" v-bind:editGroup="editGroup" @close="closeModal" @addNewGroup="addGroups"></modal>
+    <modal v-if="isShoewModal" v-bind:groups="groups" v-bind:modalOption="modalOption" v-bind:editGroup="editGroup" v-bind:deleteGroup="deleteGroup" @close="closeModal" @addNewGroup="addGroups"></modal>
     <sidebar v-bind:groups="groups" @createGroup="createGroup" @changeGroup="currentGroupChange"></sidebar>
-    <chat-container v-bind:groups="groups" v-bind:groupIndex="currentGroupIndex" @updateGroup="updateGroup"></chat-container>
+    <chat-container v-bind:groups="groups" v-bind:groupIndex="currentGroupIndex" @updateGroup="updateGroup" @deleteGroup="deleteGroup"></chat-container>
   </div>
 </template>
 
@@ -62,7 +62,17 @@ axios.defaults.headers.common = {
         };
         this.isShoewModal = true;
         this.modalOption = 'update';
-      }
+      },
+      deleteGroup: function(index){
+        const group = this.groups[index];
+        this.deleteGroup = {
+          id: group.id,
+          name: group.name,
+          index: index
+        };
+        this.isShoewModal = true;
+        this.modalOption = 'delete';
+      },
     },
     created() {
       const _this = this;

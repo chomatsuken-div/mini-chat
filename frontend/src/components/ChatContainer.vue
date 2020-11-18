@@ -6,7 +6,7 @@
           <div class="chat-conteiner__content__group-box__left__name">{{groups[groupIndex].name}}</div>
           <button class="chat-conteiner__content__group-box__left__edit" @click="editGroup(groupIndex)">編集</button>
         </div>
-        <button class="chat-conteiner__content__group-box__right">チャットグループを削除する</button>
+        <button class="chat-conteiner__content__group-box__right" @click="deleteGroup(groupIndex)">チャットグループを削除する</button>
       </div>
       <ul class="chat-conteiner__content__messages">
         <li v-for="message in groups[groupIndex].messages">
@@ -35,7 +35,10 @@ export default {
   methods: {
     editGroup: function(index){
       this.$emit('updateGroup', index);
-    }
+    },
+    deleteGroup: function(index){
+      this.$emit('deleteGroup', index);
+    },
   },
 }
 </script>
