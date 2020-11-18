@@ -26,6 +26,15 @@ class Api::V1::GroupsController < ApplicationController
     end
   end
 
+  def destroy
+    group = Group.find(params[:id])
+    if group.destroy
+      render json: { status: 200 }
+    else
+      render json: { errors: group.errors.full_messages }
+    end
+  end
+
   private
     def group_params
       params.require(:group).permit(:name)
