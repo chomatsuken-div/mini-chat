@@ -89,7 +89,7 @@ axios.defaults.headers.common = {
       .then(function(response){
         if (!response.data.errors){
           const groups_array = [];
-          response_data.forEach(function(group){
+          response.data.forEach(function(group){
             const molding_group = {
               id: group.id,
               name: group.name,
