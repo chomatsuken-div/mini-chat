@@ -60,7 +60,7 @@ RSpec.describe "Api::V1::Groups", type: :request do
   
       context 'グループにメッセージが紐づいていない場合' do
         before do
-          create(:group)
+          group
           subject
           @json = JSON.parse(response.body)
         end
