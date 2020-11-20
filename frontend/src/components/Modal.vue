@@ -27,6 +27,13 @@
             <input class="input-submit" type="submit" value="更新">
           </form>
         </div>
+        <div class="modal-content" v-else-if="modalOption === 'delete'">
+          <div class="title">グループ削除</div>
+          <form class="content" @submit.prevent="destroyRequestGroup(deleteGroup.index)">
+            <p class="input-text text-center">グループ名: {{deleteGroup.name}}</p>
+            <input class="input-submit" type="submit" value="本当に削除しますか？">
+          </form>
+        </div>
         <footer class="modal-footer">
           <slot name="footer">
             <button @click="$emit('close')" class="close-btn">Close</button>
@@ -49,7 +56,8 @@ export default {
   props: [
     'groups',
     'modalOption',
-    'editGroup'
+    'editGroup',
+    'deleteGroup'
   ],
   data: function () {
     return {
@@ -109,6 +117,23 @@ export default {
       } else {
         _this.notice = {errors: ['グループ名を入力してください']};
       }
+    },
+    destroyRequestGroup: function(index){
+      const _this = this;
+      const group_id = _this.deleteGroup.id;
+      const API_V1_GROUP_PATH_JSON = `/api/v1/groups/${group_id}.json`;
+      axios.delete(API_V1_GROUP_PATH_JSON)
+      .then(function(response){
+        if (!response.data.errors){
+          _this.notice = {success: ['グループ削除が成功しました']};
+          _this.$emit('deleteGroupFromGroups', index);
+        } else {
+          _this.notice = {errors: response.data.errors};
+        }
+      })
+      .catch(function(error){
+        alert(error.message);
+      });
     }
   },
 }
@@ -163,6 +188,9 @@ export default {
       }
       .input-submit {
         width: 50%;
+      }
+      .text-center {
+        text-align: center;
       }
     }
   }

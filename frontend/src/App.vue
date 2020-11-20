@@ -1,8 +1,8 @@
 <template>
   <div id="main">
-    <modal v-if="isShoewModal" v-bind:groups="groups" v-bind:modalOption="modalOption" v-bind:editGroup="editGroup" @close="closeModal" @addNewGroup="addGroups"></modal>
+    <modal v-if="isShowModal" v-bind:groups="groups" v-bind:modalOption="modalOption" v-bind:editGroup="editGroup" v-bind:deleteGroup="deleteGroup" @close="closeModal" @addNewGroup="addGroups" @deleteGroupFromGroups="deleteGroupFromGroups"></modal>
     <sidebar v-bind:groups="groups" @createGroup="createGroup" @changeGroup="currentGroupChange"></sidebar>
-    <chat-container v-bind:groups="groups" v-bind:groupIndex="currentGroupIndex" @updateGroup="updateGroup"></chat-container>
+    <chat-container v-bind:groups="groups" v-bind:groupIndex="currentGroupIndex" @updateGroup="updateGroup" @selectedDeleteGroup="selectedDeleteGroup"></chat-container>
   </div>
 </template>
 
@@ -26,19 +26,20 @@ axios.defaults.headers.common = {
     },
     data: function () {
       return {
-        isShoewModal: false,
+        isShowModal: false,
         modalOption: '',
         currentGroupIndex: null,
         editGroup : null,
+        deleteGroup: null,
         groups: []
       }
     },
     methods: {
       openModal() {
-        this.isShoewModal = true;
+        this.isShowModal = true;
       },
       closeModal() {
-        this.isShoewModal = false;
+        this.isShowModal = false;
       },
       currentGroupChange: function (index) {
         const group = this.groups[index];
@@ -46,7 +47,7 @@ axios.defaults.headers.common = {
         this.currentGroupIndex = index;
       },
       createGroup: function(e){
-        this.isShoewModal = true;
+        this.isShowModal = true;
         this.modalOption = 'create';
       },
       addGroups: function(group){
@@ -60,8 +61,22 @@ axios.defaults.headers.common = {
           name: group.name,
           index: index
         };
-        this.isShoewModal = true;
+        this.isShowModal = true;
         this.modalOption = 'update';
+      },
+      selectedDeleteGroup: function(index){
+        const group = this.groups[index];
+        this.deleteGroup = {
+          id: group.id,
+          name: group.name,
+          index: index
+        };
+        this.isShowModal = true;
+        this.modalOption = 'delete';
+      },
+      deleteGroupFromGroups: function(index){
+        this.groups.splice(index, 1);
+        this.currentGroupIndex = null;
       }
     },
     created() {
