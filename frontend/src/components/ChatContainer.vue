@@ -14,7 +14,7 @@
           {{message.content}}
         </li>
       </ul>
-      <form class="chat-conteiner__content__form" @submit.prevent="createRequestMessage(groupIndex)">
+      <form class="chat-conteiner__content__form" @submit.prevent="speak(groupIndex)">
         <input type="text" class="chat-conteiner__content__form__text" v-model="newMessage.content">
         <input type="submit" class="chat-conteiner__content__form__submit" value="送信">
       </form>
@@ -43,11 +43,23 @@ export default {
     return {
       isShowModal: false,
       notice: '',
+      messageChannel: null,
       newMessage: {
         content: '',
         groupIndex: ''
-      }
+      },
     }
+  },
+  created() {
+    this.messageChannel = this.$cable.subscriptions.create( "MessageChannel", {
+      received: (message) => {
+        const group = this.groups[this.groupIndex];
+        if (message.group_id === group.id){
+          group.messages.unshift(message);
+        }
+        this.newMessage.content = '';
+      },
+    })
   },
   methods: {
     openModal() {
@@ -62,34 +74,17 @@ export default {
     deleteGroup: function(index){
       this.$emit('selectedDeleteGroup', index);
     },
-    createRequestMessage: function(groupIndex){
-      const _this = this;
-      const group = _this.groups[groupIndex];
-      const API_V1_GROUP_MESSAGES_PATH_JSON = `/api/v1/groups/${group.id}/messages.json`;
-      if (_this.newMessage.content !== ''){
-        const message_params = {content: _this.newMessage.content};
-        axios.post(API_V1_GROUP_MESSAGES_PATH_JSON, message_params)
-        .then(function(response){
-          if (!response.data.errors){
-            _this.newMessage.content = '';
-            const createdMessage = {
-              content: response.data.content,
-              groupIndex: groupIndex
-            }
-            _this.$emit('addNewMessage', createdMessage);
-          } else {
-            _this.openModal();
-            _this.notice = {errors: response.data.errors};
-          }
-        })
-        .catch(function(error){
-          alert(error.message);
+    speak: function(groupIndex) {
+      if (this.newMessage.content !== ''){
+        this.messageChannel.perform('speak', { 
+          content: this.newMessage.content,
+          group_id: this.groups[groupIndex].id
         });
       } else {
-        _this.openModal();
-        _this.notice = {errors: ['メッセージを入力してください']};
+        this.openModal();
+        this.notice = {errors: ['メッセージを入力してください']};
       }
-    }
+    },
   },
 }
 </script>
