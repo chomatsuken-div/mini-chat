@@ -45,13 +45,8 @@ class Api::V1::GroupsController < ApplicationController
     end
 
     def set_groups
-      @groups = []
-      groups = Group.order(created_at: :DESC)
-      groups.each do |group|
-        messages = group.messages
-        group_hash = group.attributes
-        group_hash[:messages] = messages
-        @groups << group_hash
+      @groups = Group.preload(:messages).order(created_at: :desc).map do |group|
+        group.attributes.merge(messages: group.messages.map(&:attributes))
       end
     end
 end

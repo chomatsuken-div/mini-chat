@@ -80,8 +80,7 @@ axios.defaults.headers.common = {
         this.currentGroupIndex = null;
       },
       addNewMessage: function(newMessage){
-        const group = this.groups[newMessage.groupIndex];
-        group.messages.unshift(newMessage);
+        this.groups[newMessage.groupIndex].messages.unshift(newMessage);
       }
     },
     created() {
@@ -89,9 +88,8 @@ axios.defaults.headers.common = {
       axios.get(_this.$API_V1_GROUPS_PATH_JSON)
       .then(function(response){
         if (!response.data.errors){
-          const response_groups = response.data;
           const groups_array = [];
-          response_groups.forEach(function(group){
+          response_data.forEach(function(group){
             const molding_group = {
               id: group.id,
               name: group.name,

@@ -1,7 +1,6 @@
 class Api::V1::MessagesController < ApplicationController
   def create
-    group = Group.find(params[:group_id])
-    message = group.messages.new(message_params)
+    message = Group.find(params[:group_id]).messages.new(message_params)
     if message.save
       render json: message, status: 200
     else
