@@ -1,10 +1,10 @@
 class Api::V1::GroupsController < ApplicationController
+  before_action :set_groups, only: [:index]
   before_action :set_group, only: [:update, :destroy]
   
   def index
-    groups = Group.order(created_at: :DESC)
-    if groups.present?
-      render json: groups, status: 200
+    if @groups.present?
+      render json: @groups, status: 200
     else
       render json: { errors: "グループが存在しません" }
     end
@@ -42,5 +42,16 @@ class Api::V1::GroupsController < ApplicationController
 
     def set_group
       @group = Group.find(params[:id])
+    end
+
+    def set_groups
+      @groups = []
+      groups = Group.order(created_at: :DESC)
+      groups.each do |group|
+        messages = group.messages
+        group_hash = group.attributes
+        group_hash[:messages] = messages
+        @groups << group_hash
+      end
     end
 end

@@ -11,7 +11,7 @@
       </div>
       <ul class="chat-conteiner__content__messages">
         <li v-for="message in groups[groupIndex].messages">
-          {{message}}
+          {{message.content}}
         </li>
       </ul>
       <form class="chat-conteiner__content__form" @submit.prevent="createRequestMessage(groupIndex)">

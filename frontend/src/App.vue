@@ -81,7 +81,7 @@ axios.defaults.headers.common = {
       },
       addNewMessage: function(newMessage){
         const group = this.groups[newMessage.groupIndex];
-        group.messages.unshift(newMessage.content);
+        group.messages.unshift(newMessage);
       }
     },
     created() {
@@ -96,7 +96,7 @@ axios.defaults.headers.common = {
               id: group.id,
               name: group.name,
               unread_count: 0,
-              messages: ['ooo']
+              messages: group.messages
             };
             groups_array.push(molding_group);
           })
