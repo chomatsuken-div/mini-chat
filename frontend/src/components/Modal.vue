@@ -48,8 +48,8 @@
 import axios from 'axios';
 
 axios.defaults.headers.common = {
-    'X-Requested-With': 'XMLHttpRequest',
-    'X-CSRF-TOKEN' : document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+  'X-Requested-With': 'XMLHttpRequest',
+  'X-CSRF-TOKEN' : document.querySelector('meta[name="csrf-token"]').getAttribute('content')
 };
 
 export default {
@@ -57,14 +57,14 @@ export default {
     'groups',
     'modalOption',
     'editGroup',
-    'deleteGroup'
+    'deleteGroup',
+    'notice'
   ],
   data: function () {
     return {
       newGroup: {
         name: ''
-      },
-      notice: null
+      }
     }
   },
   created() {

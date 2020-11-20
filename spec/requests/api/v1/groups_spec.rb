@@ -38,6 +38,42 @@ RSpec.describe "Api::V1::Groups", type: :request do
         expect(@json["errors"]).to eq("グループが存在しません")
       end
     end
+
+    describe 'グループに紐づいているメッセージ取得確認' do
+      let(:group) { create(:group) }
+
+      context 'グループにメッセージが紐づいている場合' do
+        before do
+          create_list(:message, 5, group_id: group.id)
+          subject
+          @json = JSON.parse(response.body)
+        end
+
+        it 'ステータス200を返す' do
+          expect(response.status).to eq(200)
+        end
+  
+        it 'グループに紐づいているメッセージの数を返す' do
+          expect(@json[0]["messages"].length).to eq(5)
+        end
+      end
+  
+      context 'グループにメッセージが紐づいていない場合' do
+        before do
+          group
+          subject
+          @json = JSON.parse(response.body)
+        end
+  
+        it 'ステータス200を返す' do
+          expect(response.status).to eq(200)
+        end
+  
+        it 'グループが存在しない場合、エラーメッセージを返す' do
+          expect(@json[0]["messages"].length).to eq(0)
+        end
+      end
+    end
   end
 
   describe 'グループ作成機能(api/v1/groups#create)' do

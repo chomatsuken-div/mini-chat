@@ -1,8 +1,8 @@
 <template>
   <div id="main">
-    <modal v-if="isShowModal" v-bind:groups="groups" v-bind:modalOption="modalOption" v-bind:editGroup="editGroup" v-bind:deleteGroup="deleteGroup" @close="closeModal" @addNewGroup="addGroups" @deleteGroupFromGroups="deleteGroupFromGroups"></modal>
+    <modal v-if="isShowModal" v-bind:groups="groups" v-bind:modalOption="modalOption" v-bind:notice="notice" v-bind:editGroup="editGroup" v-bind:deleteGroup="deleteGroup" @close="closeModal" @addNewGroup="addGroups" @deleteGroupFromGroups="deleteGroupFromGroups"></modal>
     <sidebar v-bind:groups="groups" @createGroup="createGroup" @changeGroup="currentGroupChange"></sidebar>
-    <chat-container v-bind:groups="groups" v-bind:groupIndex="currentGroupIndex" @updateGroup="updateGroup" @selectedDeleteGroup="selectedDeleteGroup"></chat-container>
+    <chat-container v-bind:groups="groups" v-bind:groupIndex="currentGroupIndex" @updateGroup="updateGroup" @selectedDeleteGroup="selectedDeleteGroup" @addNewMessage="addNewMessage"></chat-container>
   </div>
 </template>
 
@@ -14,8 +14,8 @@ import ChatContainer from './components/ChatContainer.vue';
 import axios from 'axios';
 
 axios.defaults.headers.common = {
-    'X-Requested-With': 'XMLHttpRequest',
-    'X-CSRF-TOKEN' : document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+  'X-Requested-With': 'XMLHttpRequest',
+  'X-CSRF-TOKEN' : document.querySelector('meta[name="csrf-token"]').getAttribute('content')
 };
 
   export default {
@@ -28,6 +28,7 @@ axios.defaults.headers.common = {
       return {
         isShowModal: false,
         modalOption: '',
+        notice: null,
         currentGroupIndex: null,
         editGroup : null,
         deleteGroup: null,
@@ -47,7 +48,7 @@ axios.defaults.headers.common = {
         this.currentGroupIndex = index;
       },
       createGroup: function(e){
-        this.isShowModal = true;
+        this.openModal();
         this.modalOption = 'create';
       },
       addGroups: function(group){
@@ -61,7 +62,7 @@ axios.defaults.headers.common = {
           name: group.name,
           index: index
         };
-        this.isShowModal = true;
+        this.openModal();
         this.modalOption = 'update';
       },
       selectedDeleteGroup: function(index){
@@ -71,12 +72,15 @@ axios.defaults.headers.common = {
           name: group.name,
           index: index
         };
-        this.isShowModal = true;
+        this.openModal();
         this.modalOption = 'delete';
       },
       deleteGroupFromGroups: function(index){
         this.groups.splice(index, 1);
         this.currentGroupIndex = null;
+      },
+      addNewMessage: function(newMessage){
+        this.groups[newMessage.groupIndex].messages.unshift(newMessage);
       }
     },
     created() {
@@ -84,14 +88,13 @@ axios.defaults.headers.common = {
       axios.get(_this.$API_V1_GROUPS_PATH_JSON)
       .then(function(response){
         if (!response.data.errors){
-          const response_groups = response.data;
           const groups_array = [];
-          response_groups.forEach(function(group){
+          response.data.forEach(function(group){
             const molding_group = {
               id: group.id,
               name: group.name,
               unread_count: 0,
-              messages: []
+              messages: group.messages
             };
             groups_array.push(molding_group);
           })
