@@ -56,11 +56,17 @@ export default {
   },
   created() {
     this.messageChannel = this.$cable.subscriptions.create( "MessageChannel", {
-      received: (message) => {
-        const group = this.groups[this.groupIndex];
-        if (message.group_id === group.id){
-          group.messages.unshift(message);
-        }
+      received: (resultMessage) => {
+        if (resultMessage.success !== undefined){
+          const group = this.groups[this.groupIndex];
+          const message = resultMessage.success;
+          if (message.group_id === group.id){
+            group.messages.unshift(message);
+          }
+        } else {
+          this.openModal();
+          this.notice = message.errors;
+        };
         this.newMessage.content = '';
       },
     })
