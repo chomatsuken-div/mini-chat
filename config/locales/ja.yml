@@ -2,6 +2,9 @@ ja:
   activerecord:
     models:
       group: グループ
+      message: メッセージ
     attributes:
       group:
         name: グループ名
+      message:
+        content: メッセージ内容
