@@ -57,14 +57,14 @@ export default {
     'groups',
     'modalOption',
     'editGroup',
-    'deleteGroup'
+    'deleteGroup',
+    'notice'
   ],
   data: function () {
     return {
       newGroup: {
         name: ''
-      },
-      notice: null
+      }
     }
   },
   created() {

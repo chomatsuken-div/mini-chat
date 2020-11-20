@@ -1,5 +1,6 @@
 <template>
   <div class="chat-conteiner">
+    <modal v-if="isShowModal" v-bind:notice="notice" @close="closeModal"></modal>
     <div class="chat-conteiner__content" v-if="groupIndex !== null">
       <div class="chat-conteiner__content__group-box">
         <div class="chat-conteiner__content__group-box__left">
@@ -10,11 +11,11 @@
       </div>
       <ul class="chat-conteiner__content__messages">
         <li v-for="message in groups[groupIndex].messages">
-          {{message.text}}
+          {{message}}
         </li>
       </ul>
-      <form class="chat-conteiner__content__form">
-        <input type="text" class="chat-conteiner__content__form__text">
+      <form class="chat-conteiner__content__form" @submit.prevent="createRequestMessage(groupIndex)">
+        <input type="text" class="chat-conteiner__content__form__text" v-model="newMessage.content">
         <input type="submit" class="chat-conteiner__content__form__submit" value="送信">
       </form>
     </div>
@@ -22,23 +23,69 @@
 </template>
 
 <script>
+import axios from 'axios';
+import Modal from './Modal.vue';
+
+axios.defaults.headers.common = {
+  'X-Requested-With': 'XMLHttpRequest',
+  'X-CSRF-TOKEN' : document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+};
 
 export default {
+  components:{
+    Modal
+  },
   props: [
    'groups',
    'groupIndex'
   ],
   data: function () {
     return {
+      isShowModal: false,
+      notice: '',
+      newMessage: {
+        content: '',
+        groupIndex: ''
+      }
     }
   },
   methods: {
+    openModal() {
+      this.isShowModal = true;
+    },
+    closeModal() {
+      this.isShowModal = false;
+    },
     editGroup: function(index){
       this.$emit('updateGroup', index);
     },
     deleteGroup: function(index){
       this.$emit('selectedDeleteGroup', index);
     },
+    createRequestMessage: function(groupIndex){
+      const _this = this;
+      const group = _this.groups[groupIndex];
+      const API_V1_GROUP_MESSAGES_PATH_JSON = `/api/v1/groups/${group.id}/messages.json`;
+      if (_this.newMessage.content !== ''){
+        const message_params = {content: _this.newMessage.content};
+        axios.post(API_V1_GROUP_MESSAGES_PATH_JSON, message_params)
+        .then(function(response){
+          if (!response.data.errors){
+            _this.newMessage.groupIndex = groupIndex;
+            _this.$emit('addNewMessage', _this.newMessage);
+          } else {
+            _this.openModal();
+            _this.notice = {errors: response.data.errors};
+          }
+        })
+        .catch(function(error){
+          alert(error.message);
+        });
+      } else {
+        _this.openModal();
+        _this.notice = {errors: ['メッセージを入力してください']};
+      }
+    }
   },
 }
 </script>
