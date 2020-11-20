@@ -71,8 +71,12 @@ export default {
         axios.post(API_V1_GROUP_MESSAGES_PATH_JSON, message_params)
         .then(function(response){
           if (!response.data.errors){
-            _this.newMessage.groupIndex = groupIndex;
-            _this.$emit('addNewMessage', _this.newMessage);
+            _this.newMessage.content = '';
+            const createdMessage = {
+              content: response.data.content,
+              groupIndex: groupIndex
+            }
+            _this.$emit('addNewMessage', createdMessage);
           } else {
             _this.openModal();
             _this.notice = {errors: response.data.errors};
