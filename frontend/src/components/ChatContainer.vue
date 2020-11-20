@@ -15,7 +15,7 @@
         </li>
       </ul>
       <div class="chat-conteiner__content__form">
-        <textarea class="chat-conteiner__content__form__text" ref="textarea_message" v-model="newMessage.content" v-bind:style="{height:obj.height}" @input="textAreaHeightSet"></textarea>
+        <textarea class="chat-conteiner__content__form__text" ref="textarea_message" v-model="newMessage.content" v-bind:style="{height:obj.height}" @input="textAreaHeightSet" v-on:keydown.enter="cmdAndEnter"></textarea>
         <button class="chat-conteiner__content__form__submit" @click="speak(groupIndex)">送信</button>
       </div>
     </div>
@@ -99,6 +99,11 @@ export default {
         this.obj.height = `${textareaHeight + 10}px`;
         this.obj.lineNumber = newLineNum.length;
       };
+    },
+    cmdAndEnter: function(e){
+      if (e.metaKey){
+        this.speak(this.groupIndex);
+      }
     }
   },
 }
