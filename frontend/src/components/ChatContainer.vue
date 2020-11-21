@@ -58,10 +58,11 @@ export default {
     this.messageChannel = this.$cable.subscriptions.create( "MessageChannel", {
       received: (resultMessage) => {
         if (resultMessage.success !== undefined){
-          const group = this.groups[this.groupIndex];
           const message = resultMessage.success;
+          const group = this.groups.find(group => group.id === message.group_id);
           if (message.group_id === group.id){
             group.messages.unshift(message);
+            (this.groupIndex === null) || (message.group_id !== this.groups[this.groupIndex].id) ? group.unread_count += 1 : null;
           }
         } else {
           this.openModal();
