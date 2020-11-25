@@ -14,10 +14,10 @@
           {{message.content}}
         </li>
       </ul>
-      <form class="chat-conteiner__content__form" @submit.prevent="createRequestMessage(groupIndex)">
-        <input type="text" class="chat-conteiner__content__form__text" v-model="newMessage.content">
-        <input type="submit" class="chat-conteiner__content__form__submit" value="送信">
-      </form>
+      <div class="chat-conteiner__content__form">
+        <textarea class="chat-conteiner__content__form__text" ref="textarea_message" v-model="newMessage.content" v-bind:style="{height:obj.height}" @input="textAreaHeightSet" v-on:keydown.enter="cmdAndEnter"></textarea>
+        <button class="chat-conteiner__content__form__submit" @click="speak(groupIndex)">送信</button>
+      </div>
     </div>
   </div>
 </template>
@@ -43,11 +43,34 @@ export default {
     return {
       isShowModal: false,
       notice: '',
+      messageChannel: null,
       newMessage: {
         content: '',
         groupIndex: ''
+      },
+      obj: {
+        height: '100%',
+        lineNumber: 0
       }
     }
+  },
+  created() {
+    this.messageChannel = this.$cable.subscriptions.create( "MessageChannel", {
+      received: (resultMessage) => {
+        if (resultMessage.success !== undefined){
+          const message = resultMessage.success;
+          const group = this.groups.find(group => group.id === message.group_id);
+          if (message.group_id === group.id){
+            group.messages.unshift(message);
+            (this.groupIndex === null) || (message.group_id !== this.groups[this.groupIndex].id) ? group.unread_count += 1 : null;
+          }
+        } else {
+          this.openModal();
+          this.notice = message.errors;
+        };
+        this.newMessage.content = '';
+      },
+    })
   },
   methods: {
     openModal() {
@@ -62,32 +85,31 @@ export default {
     deleteGroup: function(index){
       this.$emit('selectedDeleteGroup', index);
     },
-    createRequestMessage: function(groupIndex){
-      const _this = this;
-      const group = _this.groups[groupIndex];
-      const API_V1_GROUP_MESSAGES_PATH_JSON = `/api/v1/groups/${group.id}/messages.json`;
-      if (_this.newMessage.content !== ''){
-        const message_params = {content: _this.newMessage.content};
-        axios.post(API_V1_GROUP_MESSAGES_PATH_JSON, message_params)
-        .then(function(response){
-          if (!response.data.errors){
-            _this.newMessage.content = '';
-            const createdMessage = {
-              content: response.data.content,
-              groupIndex: groupIndex
-            }
-            _this.$emit('addNewMessage', createdMessage);
-          } else {
-            _this.openModal();
-            _this.notice = {errors: response.data.errors};
-          }
-        })
-        .catch(function(error){
-          alert(error.message);
+    speak: function(groupIndex) {
+      if (this.newMessage.content !== ''){
+        this.messageChannel.perform('speak', { 
+          content: this.newMessage.content,
+          group_id: this.groups[groupIndex].id
         });
       } else {
-        _this.openModal();
-        _this.notice = {errors: ['メッセージを入力してください']};
+        this.openModal();
+        this.notice = {errors: ['メッセージを入力してください']};
+      }
+      this.obj.height = '100%';
+      this.obj.lineNumber = 0;
+    },
+    textAreaHeightSet: function(e){
+      const textarea = this.$refs.textarea_message;
+      const textareaHeight = textarea.scrollHeight;
+      const newLineNum = textarea.value.match(/\n/g);
+      if (newLineNum !== null && newLineNum.length > (this.obj.lineNumber + 2) && (textareaHeight <= 300)) {
+        this.obj.height = `${textareaHeight + 10}px`;
+        this.obj.lineNumber = newLineNum.length;
+      };
+    },
+    cmdAndEnter: function(e){
+      if (e.metaKey){
+        this.speak(this.groupIndex);
       }
     }
   },
@@ -125,24 +147,35 @@ export default {
       }
     }
     &__messages {
-      height: calc(100% - 146px);
+      height: calc(100% - 200px);
       margin: 30px;
       overflow: auto;
       &::-webkit-scrollbar {
         display:none;
       }
       li {
+        width: 100%;
         padding-bottom: 20px;
+        white-space: pre-line;
+        word-break: break-word;
       }
     }
     &__form {
-      display: flex;
+      height: 100px;
+      position: relative;
       &__text {
-        width: 100%;
+        height: 100%;
+        width: calc(100% - 130px);
+        position: absolute;
+        bottom: 0;
         border: #808080 1px solid;
         border-radius: 3px;
       }
       &__submit {
+        width: 100px;
+        position: absolute;
+        top: calc(50% - 20px);
+        right: 0;
         background: #808080;
         margin-left: 20px;
         padding: 10px;
